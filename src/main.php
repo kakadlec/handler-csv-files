@@ -6,7 +6,7 @@ use App\CsvHandler\CsvProcessor;
 use App\CsvHandler\Internal\CsvReader;
 use App\CsvHandler\Internal\CsvWriter;
 
-$inputFile = __DIR__ . '/../export/Result_08-01_08-04_025000.csv';
+$inputFile = __DIR__ . '/../export/all_2024-10-30_13-36-36.csv';
 $affectedPayments =  __DIR__ . '/../result/affected_payments.csv';
 $badTokens =  __DIR__ . '/../result/bad_tokens.csv';
 
