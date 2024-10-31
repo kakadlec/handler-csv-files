@@ -26,11 +26,16 @@ class CsvProcessorTest extends TestCase
         $processor->process();
 
         rewind($affectedPayments);
-        rewind($affectedPayments);
+        rewind($badTokens);
         $outputContent = stream_get_contents($affectedPayments);
-        $expected = "payment_id\n132501037557\n";
+        $expected = "132501037557\n";
+
+        $outputBadContent = stream_get_contents($badTokens);
+        $bad_tokens_expected = "token3,132501037557,'2024-07-11 00:00:02'\n";
 
         $this->assertEquals($expected, $outputContent);
+        $this->assertEquals($bad_tokens_expected, $outputBadContent);
+
 
         fclose($input);
         fclose($affectedPayments);
@@ -40,13 +45,11 @@ class CsvProcessorTest extends TestCase
     private function createInputFile()
     {
         $input = fopen('php://memory', 'r+');
-        fwrite(
-            $input,
-            "request_date,payment_id,merchant_id,token_request,token_response,card_bin_request,card_bin_response\n"
-        );
         fwrite($input, "2024-07-11 00:00:01,132501037555,6251,token1,token1,,491566\n");
         fwrite($input, "2024-07-11 00:00:02,132501037557,4690,token2,token3,557908,557908\n");
+        fwrite($input, "2024-07-11 00:00:02,132501037557,4690,token2,token3,557908,557908\n");
         fwrite($input, "2024-07-11 00:00:02,132501037557,4690,token3,,557908,557908\n");
+        fwrite($input, "2024-07-11 00:00:02,132501037557,4690,,token4,******,550210\n");
         rewind($input);
 
         return $input;
@@ -86,7 +89,7 @@ class CsvProcessorTest extends TestCase
 
             public function writeRow(array $row): void
             {
-                fputcsv($this->stream, $row);
+                fputcsv($this->stream, $row, ',', "'");
             }
         };
     }

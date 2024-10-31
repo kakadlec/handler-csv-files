@@ -4,3 +4,5 @@
 vendor
 export/**
 result/**
+
+.phpunit.result.cache
